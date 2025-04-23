@@ -1,0 +1,3 @@
+echo "**** Running ESLint... ****  🔍"
+npx lint-staged
+echo "SUCCESS: all checks passed ✅"
