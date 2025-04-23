@@ -7,7 +7,10 @@ import { isNoBodyRequestMethod } from '@/predicates';
 import ApiError from '@/ApiError';
 import { ErrorMessage } from '@/ErrorMessage';
 import ApiResponse from '@/ApiResponse';
-import { IRequestAdapter } from './IRequestAdapter';
+import {
+  DataConfig,
+  IRequestAdapter
+} from './IRequestAdapter';
 
 const HEADER_TOKEN_NAME = 'Authorization'
 
@@ -87,10 +90,10 @@ export default abstract class AbstractRequestAdapter implements IRequestAdapter 
     this._token = token
   }
 
-  abstract request<T = unknown>(
+  abstract request(
     _: TRequestMethod,
     _1: string,
     _2?: TRequestParams,
-    _3?: TRequestConfig
-  ): Promise<ApiResponse<T>>
+    config?: TRequestConfig
+  ): Promise<ApiResponse<DataConfig<typeof config>>>
 }
