@@ -1,6 +1,6 @@
 import { ApiResponseProps } from './IApiResponse'
 
-export default class ApiResponse<T = unknown> {
+export default class ApiResponse<T = any> {
   private readonly _data: T
   private readonly _status: number
   private readonly _statusText: string

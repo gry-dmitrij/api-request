@@ -5,5 +5,5 @@ export type DataType<T extends (ResponseType | undefined) = undefined> = T exten
 export type DataConfig<T extends (TRequestConfig | undefined) = undefined> = undefined extends T ? DataType : DataType<NonNullable<T>["responseType"]>;
 export interface IRequestAdapter {
     setToken(token: string): void;
-    request(method: TRequestMethod, url: string, params?: TRequestParams, config?: TRequestConfig): Promise<ApiResponse<DataConfig<typeof config>>>;
+    request<T = any>(method: TRequestMethod, url: string, params?: TRequestParams, config?: TRequestConfig): Promise<ApiResponse<T>>;
 }

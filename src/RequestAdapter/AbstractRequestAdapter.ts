@@ -8,7 +8,6 @@ import ApiError from '@/ApiError';
 import { ErrorMessage } from '@/ErrorMessage';
 import ApiResponse from '@/ApiResponse';
 import {
-  DataConfig,
   IRequestAdapter
 } from './IRequestAdapter';
 
@@ -90,10 +89,10 @@ export default abstract class AbstractRequestAdapter implements IRequestAdapter 
     this._token = token
   }
 
-  abstract request(
+  abstract request<T = any>(
     _: TRequestMethod,
     _1: string,
     _2?: TRequestParams,
-    config?: TRequestConfig
-  ): Promise<ApiResponse<DataConfig<typeof config>>>
+    _3?: TRequestConfig
+  ): Promise<ApiResponse<T>>
 }

@@ -7,17 +7,16 @@ import {
 } from './constants';
 import RequestAdapterFactory from './RequestAdapter/RequestAdapterFactory';
 import ApiResponse from './ApiResponse';
-import { DataConfig } from './RequestAdapter/IRequestAdapter';
 
 export default class ApiRequest {
   private _token: string | undefined
 
-  request(
+  request<T = any>(
     method: TRequestMethod,
     url: string,
     params?: TRequestParams,
     config?: TRequestConfig
-  ): Promise<ApiResponse<DataConfig<typeof config>>> {
+  ): Promise<ApiResponse<T>> {
     const adapter = RequestAdapterFactory.createRequestAdapter(method, config)
     if (this._token) {
       adapter.setToken(this._token)

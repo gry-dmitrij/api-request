@@ -10,5 +10,5 @@ export default class XMLHttpAdapter extends AbstractRequestAdapter {
     private _onload;
     private _onerror;
     private _onprogress;
-    request<T = unknown>(method: TRequestMethod, url: string, params?: TRequestParams, config?: TRequestConfig): Promise<ApiResponse<T>>;
+    request<T = any>(method: TRequestMethod, url: string, params?: TRequestParams, config?: TRequestConfig): Promise<ApiResponse<T>>;
 }

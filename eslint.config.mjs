@@ -21,6 +21,7 @@ export default tseslint.config(
           "argsIgnorePattern": "^_",
           "caughtErrors": "none"
         }],
+      "@typescript-eslint/no-explicit-any": 0,
       "@typescript-eslint/quotes": 0,
       "object-curly-newline": 0,
       "react/prop-types": 0,

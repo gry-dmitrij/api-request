@@ -6,7 +6,7 @@ import {
 
 export type ResponseType = 'arraybuffer' | 'blob' | 'json' | 'text'
 export type TNoBodyRequestParams = Record<string, string | number | boolean>
-export type TBodyRequestParams = TNoBodyRequestParams | Record<string, unknown> | FormData
+export type TBodyRequestParams = TNoBodyRequestParams | Record<string, any> | FormData
 export type TRequestParams = TNoBodyRequestParams | TBodyRequestParams
 export type TRequestHeaders = [string, string][] | Record<string, string> | Headers
 
@@ -30,14 +30,14 @@ export type TRequestConfig = {
 })
 
 export interface IRequestFunction {
-  <T = unknown>(
+  <T = any>(
     method: TNoBodyRequestMethod,
     url: string,
     params?: TNoBodyRequestParams,
     config?: TRequestConfig
   ): Promise<ApiResponse<T>>
 
-  <T = unknown>(
+  <T = any>(
     method: TBodyRequestMethod,
     url: string,
     params?: TBodyRequestParams,

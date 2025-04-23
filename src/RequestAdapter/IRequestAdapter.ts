@@ -19,10 +19,10 @@ export type DataConfig<T extends (TRequestConfig | undefined) = undefined> = und
 export interface IRequestAdapter {
   setToken(token: string): void
 
-  request(
+  request<T = any>(
     method: TRequestMethod,
     url: string,
     params?: TRequestParams,
     config?: TRequestConfig
-  ): Promise<ApiResponse<DataConfig<typeof config>>>
+  ): Promise<ApiResponse<T>>
 }

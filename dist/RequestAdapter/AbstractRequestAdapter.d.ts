@@ -1,7 +1,7 @@
 import { TRequestMethod } from '../constants';
 import { TRequestConfig, TRequestParams } from '../IApiRequest';
 import { default as ApiResponse } from '../ApiResponse';
-import { DataConfig, IRequestAdapter } from './IRequestAdapter';
+import { IRequestAdapter } from './IRequestAdapter';
 export default abstract class AbstractRequestAdapter implements IRequestAdapter {
     protected _token: string | undefined;
     protected _headersHas(headers: HeadersInit, key: string): boolean;
@@ -12,5 +12,5 @@ export default abstract class AbstractRequestAdapter implements IRequestAdapter 
     protected _createUrl(method: TRequestMethod, url: string, params?: TRequestParams): string;
     getToken(): string | undefined;
     setToken(token: string | undefined): void;
-    abstract request(_: TRequestMethod, _1: string, _2?: TRequestParams, config?: TRequestConfig): Promise<ApiResponse<DataConfig<typeof config>>>;
+    abstract request<T = any>(_: TRequestMethod, _1: string, _2?: TRequestParams, _3?: TRequestConfig): Promise<ApiResponse<T>>;
 }

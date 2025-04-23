@@ -1,6 +1,6 @@
 import { default as ApiResponse } from './ApiResponse';
 import { ApiErrorProps } from './IApiError';
-export default class ApiError<T = unknown> extends Error {
+export default class ApiError<T = any> extends Error {
     private readonly _status;
     private readonly _statusText;
     private readonly _response;

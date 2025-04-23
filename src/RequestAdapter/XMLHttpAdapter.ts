@@ -44,7 +44,7 @@ export default class XMLHttpAdapter extends AbstractRequestAdapter {
     return headersResult
   }
 
-  private _formatResponse<T = unknown>(http: XMLHttpRequest): T {
+  private _formatResponse<T = any>(http: XMLHttpRequest): T {
     let result = http.response
     if (http.responseType === '' && typeof result === 'string') {
       try {
@@ -70,10 +70,10 @@ export default class XMLHttpAdapter extends AbstractRequestAdapter {
     })
   }
 
-  private _onload<T = unknown>(
+  private _onload<T = any>(
     http: XMLHttpRequest,
     resolve: (response: ApiResponse<T>) => void,
-    reject: (reason?: unknown) => void
+    reject: (reason?: any) => void
   ) {
     http.onload = () => {
       if (http.status >= 200 && http.status <= 299) {
@@ -89,7 +89,7 @@ export default class XMLHttpAdapter extends AbstractRequestAdapter {
     }
   }
 
-  private _onerror(http: XMLHttpRequest, reject: (reason?: unknown) => void) {
+  private _onerror(http: XMLHttpRequest, reject: (reason?: any) => void) {
     http.onerror = () => {
       reject(this._createError(http))
     }
@@ -112,7 +112,7 @@ export default class XMLHttpAdapter extends AbstractRequestAdapter {
     }
   }
 
-  request<T = unknown>(
+  request<T = any>(
     method: TRequestMethod,
     url: string,
     params?: TRequestParams,

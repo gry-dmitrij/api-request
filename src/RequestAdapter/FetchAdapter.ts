@@ -10,7 +10,6 @@ import ApiResponse from '@/ApiResponse';
 
 import AbstractRequestAdapter from './AbstractRequestAdapter';
 import {
-  DataConfig,
   DataType
 } from '@/RequestAdapter/IRequestAdapter';
 
@@ -34,9 +33,7 @@ export default class FetchAdapter extends AbstractRequestAdapter {
   private async _getDataFromResponse(
     response: Response,
     config?: TRequestConfig
-  ): Promise<DataType<undefined extends typeof config
-    ? undefined
-    : NonNullable<typeof config>["responseType"]>> {
+  ): Promise<any> {
     const type = config?.responseType
     let data: DataType<typeof type> = ''
     switch (type) {
@@ -66,7 +63,7 @@ export default class FetchAdapter extends AbstractRequestAdapter {
           message: response.statusText,
           status: response.status,
           statusText: response.statusText,
-          response: new ApiResponse<unknown>({
+          response: new ApiResponse({
             data,
             status: response.status,
             statusText: response.statusText,
@@ -78,11 +75,11 @@ export default class FetchAdapter extends AbstractRequestAdapter {
     return Promise.resolve(data)
   }
 
-  private async _fetch(request: Request, config?: TRequestConfig): Promise<ApiResponse<DataConfig<typeof config>>> {
+  private async _fetch<T = any>(request: Request, config?: TRequestConfig): Promise<ApiResponse<T>> {
     const response = await fetch(request)
     try {
-      const data: DataConfig<typeof config> = await this._getDataFromResponse(response, config)
-      return new ApiResponse<DataConfig<typeof config>>({
+      const data: T = await this._getDataFromResponse(response, config)
+      return new ApiResponse<T>({
         data,
         status: response.status,
         statusText: response.statusText,
@@ -102,12 +99,12 @@ export default class FetchAdapter extends AbstractRequestAdapter {
     }
   }
 
-  request(
+  request<T = any>(
     method: TRequestMethod,
     url: string,
     params?: TRequestParams,
     config?: TRequestConfig
-  ): Promise<ApiResponse<DataConfig<typeof config>>> {
+  ): Promise<ApiResponse<T>> {
     const requestUrl = this._createUrl(method, url, params)
     const requestInit: RequestInit = this._createRequestInit(method, params, config)
     const request = new Request(requestUrl, requestInit)
