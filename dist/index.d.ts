@@ -1,6 +1,10 @@
 import { default as ApiRequest } from './ApiRequest';
-import { NoBodyRequestMethod, BodyRequestMethod, RequestMethod, NoBodyMethods, RequestMethods } from './constants';
+import { TRequestMethod, TNoBodyRequestMethod, TBodyRequestMethod, NoBodyRequestMethod, BodyRequestMethod, RequestMethod, NoBodyMethods, RequestMethods } from './constants';
+import { ApiResponseProps } from './ApiResponse.d';
+import { ResponseType, TNoBodyRequestParams, TBodyRequestParams, TRequestParams, TRequestHeaders, ApiProgressEvent, TRequestConfig, IRequestFunction } from './ApiRequest.d';
+import { ApiErrorProps } from './ApiError.d';
 import { default as ApiResponse } from './ApiResponse';
 import { default as ApiError } from './ApiError';
 export default ApiRequest;
 export { NoBodyRequestMethod, BodyRequestMethod, RequestMethod, NoBodyMethods, RequestMethods, ApiResponse, ApiError };
+export type { TRequestMethod, TNoBodyRequestMethod, TBodyRequestMethod, ApiResponseProps, ResponseType, TNoBodyRequestParams, TBodyRequestParams, TRequestParams, TRequestHeaders, ApiProgressEvent, TRequestConfig, IRequestFunction, ApiErrorProps };

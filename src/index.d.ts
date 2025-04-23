@@ -1,8 +1,4 @@
-import {
-  TRequestMethod,
-  TNoBodyRequestMethod,
-  TBodyRequestMethod
-} from './constants'
+
 import { ApiResponseProps } from './ApiResponse.d'
 import {
   ResponseType,
