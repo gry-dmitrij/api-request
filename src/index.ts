@@ -25,6 +25,10 @@ import {
 } from './constants'
 import ApiResponse from './ApiResponse'
 import ApiError from './ApiError';
+import {
+  isRequestMethod,
+  isNoBodyRequestMethod
+} from './predicates.ts'
 
 export default ApiRequest
 
@@ -35,7 +39,9 @@ export {
   NoBodyMethods,
   RequestMethods,
   ApiResponse,
-  ApiError
+  ApiError,
+  isRequestMethod,
+  isNoBodyRequestMethod
 }
 
 export type {
