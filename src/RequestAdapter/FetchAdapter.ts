@@ -3,7 +3,7 @@ import { TRequestMethod } from '@/constants';
 import {
   TRequestConfig,
   TRequestParams
-} from '@/ApiRequest.d';
+} from '@/IApiRequest';
 import { isNoBodyRequestMethod } from '@/predicates';
 import { ErrorMessage } from '@/ErrorMessage';
 import ApiResponse from '@/ApiResponse';
@@ -12,7 +12,7 @@ import AbstractRequestAdapter from './AbstractRequestAdapter';
 import {
   DataConfig,
   DataType
-} from '@/RequestAdapter/IRequestAdapter.ts';
+} from '@/RequestAdapter/IRequestAdapter';
 
 export default class FetchAdapter extends AbstractRequestAdapter {
   private _createRequestInit(method: TRequestMethod, params?: TRequestParams, config?: TRequestConfig): RequestInit {

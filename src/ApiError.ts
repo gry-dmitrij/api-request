@@ -1,5 +1,5 @@
 import ApiResponse from './ApiResponse';
-import { ApiErrorProps } from './ApiError.d'
+import { ApiErrorProps } from './IApiError'
 
 export default class ApiError<T = unknown> extends Error {
   private readonly _status: number

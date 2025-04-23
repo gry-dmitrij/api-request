@@ -1,13 +1,13 @@
 import {
   TRequestConfig,
   TRequestParams
-} from './ApiRequest.d';
+} from './IApiRequest';
 import {
   TRequestMethod
 } from './constants';
 import RequestAdapterFactory from './RequestAdapter/RequestAdapterFactory';
 import ApiResponse from './ApiResponse';
-import { DataConfig } from '@/RequestAdapter/IRequestAdapter.ts';
+import { DataConfig } from './RequestAdapter/IRequestAdapter';
 
 export default class ApiRequest {
   private _token: string | undefined

@@ -3,7 +3,7 @@ import {
   ResponseType,
   TRequestConfig,
   TRequestParams
-} from '@/ApiRequest.d';
+} from '@/IApiRequest';
 import ApiResponse from '@/ApiResponse';
 
 export type DataType<T extends (ResponseType | undefined) = undefined> = T extends 'arraybuffer'

@@ -4,7 +4,7 @@ import type {
   TNoBodyRequestMethod,
   TBodyRequestMethod
 } from './constants'
-import { ApiResponseProps } from './ApiResponse.d'
+import { ApiResponseProps } from './IApiResponse'
 import {
   ResponseType,
   TNoBodyRequestParams,
@@ -14,8 +14,8 @@ import {
   ApiProgressEvent,
   TRequestConfig,
   IRequestFunction
-} from './ApiRequest.d'
-import { ApiErrorProps } from './ApiError.d'
+} from './IApiRequest'
+import { ApiErrorProps } from './IApiError'
 import {
   NoBodyRequestMethod,
   BodyRequestMethod,
@@ -28,7 +28,7 @@ import ApiError from './ApiError';
 import {
   isRequestMethod,
   isNoBodyRequestMethod
-} from './predicates.ts'
+} from './predicates'
 
 export default ApiRequest
 

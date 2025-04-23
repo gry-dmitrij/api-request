@@ -3,7 +3,7 @@ import ApiError from '@/ApiError';
 import {
   TRequestConfig,
   TRequestParams
-} from '@/ApiRequest.d';
+} from '@/IApiRequest';
 import ApiResponse from '@/ApiResponse';
 import AbstractRequestAdapter from './AbstractRequestAdapter';
 

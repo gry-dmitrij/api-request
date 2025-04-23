@@ -1,5 +1,5 @@
-import { TRequestMethod } from '../constants';
-import { TRequestConfig } from '../ApiRequest.d';
+import { TRequestMethod } from '@/constants';
+import { TRequestConfig } from '@/IApiRequest';
 import { IRequestAdapter } from './IRequestAdapter';
 import FetchAdapter from './FetchAdapter';
 import XMLHttpAdapter from './XMLHttpAdapter';

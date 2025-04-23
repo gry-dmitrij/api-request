@@ -2,7 +2,7 @@ import { TRequestMethod } from '@/constants';
 import {
   TRequestConfig,
   TRequestParams,
-} from '../ApiRequest.d';
+} from '@/IApiRequest';
 import { isNoBodyRequestMethod } from '@/predicates';
 import ApiError from '@/ApiError';
 import { ErrorMessage } from '@/ErrorMessage';

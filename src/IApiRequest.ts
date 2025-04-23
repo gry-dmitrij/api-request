@@ -1,9 +1,8 @@
+import ApiResponse from '@/ApiResponse';
 import {
+  TBodyRequestMethod,
   TNoBodyRequestMethod
-} from './constants.ts';
-import ApiRequest from '@/ApiRequest.ts';
-
-export default ApiRequest
+} from './constants';
 
 export type ResponseType = 'arraybuffer' | 'blob' | 'json' | 'text'
 export type TNoBodyRequestParams = Record<string, string | number | boolean>
@@ -36,12 +35,12 @@ export interface IRequestFunction {
     url: string,
     params?: TNoBodyRequestParams,
     config?: TRequestConfig
-  ): Promise<IApiResponse<T>>
+  ): Promise<ApiResponse<T>>
 
   <T = unknown>(
     method: TBodyRequestMethod,
     url: string,
     params?: TBodyRequestParams,
     config?: TRequestConfig
-  ): Promise<IApiResponse<T>>
+  ): Promise<ApiResponse<T>>
 }

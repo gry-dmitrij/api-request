@@ -1,5 +1,5 @@
 import { TRequestMethod } from '../constants';
-import { TRequestConfig, TRequestParams } from '../ApiRequest.d';
+import { TRequestConfig, TRequestParams } from '../IApiRequest';
 import { default as ApiResponse } from '../ApiResponse';
 import { DataConfig, IRequestAdapter } from './IRequestAdapter';
 export default abstract class AbstractRequestAdapter implements IRequestAdapter {

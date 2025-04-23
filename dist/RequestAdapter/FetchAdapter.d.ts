@@ -1,8 +1,8 @@
 import { TRequestMethod } from '../constants';
-import { TRequestConfig, TRequestParams } from '../ApiRequest.d';
+import { TRequestConfig, TRequestParams } from '../IApiRequest';
 import { default as ApiResponse } from '../ApiResponse';
 import { default as AbstractRequestAdapter } from './AbstractRequestAdapter';
-import { DataConfig } from './IRequestAdapter.ts';
+import { DataConfig } from './IRequestAdapter';
 export default class FetchAdapter extends AbstractRequestAdapter {
     private _createRequestInit;
     private _getDataFromResponse;
