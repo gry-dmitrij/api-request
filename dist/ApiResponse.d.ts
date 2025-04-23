@@ -1,3 +1,6 @@
+import { default as ApiResponse } from './ApiResponse.ts';
+
+export default ApiResponse
 export interface ApiResponseProps<T> {
   data: T;
   status: number;

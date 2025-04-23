@@ -1,5 +1,8 @@
 import { TNoBodyRequestMethod } from './constants.ts';
+import { default as ApiRequest } from './ApiRequest.ts';
 
+
+export default ApiRequest
 
 export type ResponseType = 'arraybuffer' | 'blob' | 'json' | 'text'
 export type TNoBodyRequestParams = Record<string, string | number | boolean>
