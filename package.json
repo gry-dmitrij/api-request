@@ -1,7 +1,6 @@
 {
   "name": "@gry-dmitrij/api-request",
-  "version": "0.0.8",
-  "type": "module",
+  "version": "0.0.9",
   "main": "./dist/index.umd.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

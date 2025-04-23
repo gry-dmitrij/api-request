@@ -5,6 +5,7 @@ import { ResponseType, TNoBodyRequestParams, TBodyRequestParams, TRequestParams,
 import { ApiErrorProps } from './ApiError.d';
 import { default as ApiResponse } from './ApiResponse';
 import { default as ApiError } from './ApiError';
+import { isRequestMethod, isNoBodyRequestMethod } from './predicates.ts';
 export default ApiRequest;
-export { NoBodyRequestMethod, BodyRequestMethod, RequestMethod, NoBodyMethods, RequestMethods, ApiResponse, ApiError };
+export { NoBodyRequestMethod, BodyRequestMethod, RequestMethod, NoBodyMethods, RequestMethods, ApiResponse, ApiError, isRequestMethod, isNoBodyRequestMethod };
 export type { TRequestMethod, TNoBodyRequestMethod, TBodyRequestMethod, ApiResponseProps, ResponseType, TNoBodyRequestParams, TBodyRequestParams, TRequestParams, TRequestHeaders, ApiProgressEvent, TRequestConfig, IRequestFunction, ApiErrorProps };
