@@ -19,7 +19,8 @@
     "lint": "lint-staged"
   },
   "lint-staged": {
-    "*.{ts,js}": "eslint --max-warnings=0"
+    "!(dist/**/*).ts": "eslint --max-warnings=0",
+    "!(dist/**/*).js": "eslint --max-warnings=0"
   },
   "repository": {
     "type": "git",
