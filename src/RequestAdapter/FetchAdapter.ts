@@ -15,7 +15,7 @@ import {
 
 export default class FetchAdapter extends AbstractRequestAdapter {
   private _createRequestInit(method: TRequestMethod, params?: TRequestParams, config?: TRequestConfig): RequestInit {
-    const body = params && params instanceof FormData
+    const body = params && (params instanceof FormData || params instanceof ReadableStream)
       ? params
       : JSON.stringify(params)
     const requestInit = {

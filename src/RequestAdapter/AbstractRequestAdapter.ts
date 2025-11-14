@@ -72,9 +72,13 @@ export default abstract class AbstractRequestAdapter implements IRequestAdapter 
       }
       if (params) {
         Object.entries(params).forEach(([key, value]) => {
-          if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-            searchParams.append(key, value.toString())
-          }
+          const values = Array.isArray(value) ? value : [value]
+          values.forEach(value => {
+            if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+              searchParams.append(key, value.toString())
+            }
+          })
+
         })
       }
     }

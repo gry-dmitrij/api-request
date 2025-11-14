@@ -1,7 +1,7 @@
 var x = Object.defineProperty;
 var R = (o, e, t) => e in o ? x(o, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : o[e] = t;
 var d = (o, e, t) => R(o, typeof e != "symbol" ? e + "" : e, t);
-class i extends Error {
+class _ extends Error {
   constructor({
     message: t,
     status: s,
@@ -24,32 +24,32 @@ class i extends Error {
     return this._response;
   }
 }
-const _ = {
+const h = {
   get: "get",
   head: "head"
 }, q = {
   post: "post",
   put: "put",
   delete: "delete"
-}, l = {
+}, c = {
   ...q,
-  ..._
-}, H = /* @__PURE__ */ new Set([
-  ...Object.values(_),
-  ...Object.values(_).map((o) => o.toUpperCase())
-]), A = /* @__PURE__ */ new Set([
-  ...Object.values(l),
-  ...Object.values(l).map((o) => o.toUpperCase())
-]), c = (o) => H.has(o), M = (o) => A.has(o);
-class T {
+  ...h
+}, A = /* @__PURE__ */ new Set([
+  ...Object.values(h),
+  ...Object.values(h).map((o) => o.toUpperCase())
+]), H = /* @__PURE__ */ new Set([
+  ...Object.values(c),
+  ...Object.values(c).map((o) => o.toUpperCase())
+]), T = (o) => A.has(o), M = (o) => H.has(o);
+class y {
   static FormDataForNoBodyMethods() {
-    return `Wrong params. FormData cannot be included in queries [${Object.values(_).reduce((t, s, r) => t + (r > 0 ? `, ${s}` : s), "")}]`;
+    return `Wrong params. FormData cannot be included in queries [${Object.values(h).reduce((t, s, r) => t + (r > 0 ? `, ${s}` : s), "")}]`;
   }
   static WrongTypeResponse() {
     return "Wrong type response";
   }
 }
-class h {
+class l {
   constructor({
     data: e,
     status: t,
@@ -76,7 +76,7 @@ class h {
   }
 }
 const p = "Authorization";
-class y {
+class w {
   constructor() {
     d(this, "_token");
   }
@@ -98,17 +98,19 @@ class y {
   }
   _createUrl(e, t, s) {
     const r = new URLSearchParams();
-    if (c(e)) {
+    if (T(e)) {
       if (s instanceof FormData)
-        throw new i(
+        throw new _(
           {
-            message: T.FormDataForNoBodyMethods(),
+            message: y.FormDataForNoBodyMethods(),
             status: 0,
             statusText: ""
           }
         );
       s && Object.entries(s).forEach(([a, n]) => {
-        (typeof n == "string" || typeof n == "number" || typeof n == "boolean") && r.append(a, n.toString());
+        (Array.isArray(n) ? n : [n]).forEach((i) => {
+          (typeof i == "string" || typeof i == "number" || typeof i == "boolean") && r.append(a, i.toString());
+        });
       });
     }
     return r.size ? `${t}?${r.toString()}` : t;
@@ -120,13 +122,13 @@ class y {
     this._token = e;
   }
 }
-class k extends y {
+class k extends w {
   _createRequestInit(e, t, s) {
-    const r = t && t instanceof FormData ? t : JSON.stringify(t), a = {
+    const r = t && (t instanceof FormData || t instanceof ReadableStream) ? t : JSON.stringify(t), a = {
       method: e.toUpperCase(),
       headers: new Headers(),
       ...s,
-      ...!c(e) && {
+      ...!T(e) && {
         body: r
       }
     };
@@ -155,12 +157,12 @@ class k extends y {
       }
     }
     if (!e.ok)
-      throw new i(
+      throw new _(
         {
           message: e.statusText,
           status: e.status,
           statusText: e.statusText,
-          response: new h({
+          response: new l({
             data: r,
             status: e.status,
             statusText: e.statusText,
@@ -174,16 +176,16 @@ class k extends y {
     const s = await fetch(e);
     try {
       const r = await this._getDataFromResponse(s, t);
-      return new h({
+      return new l({
         data: r,
         status: s.status,
         statusText: s.statusText,
         headers: s.headers
       });
     } catch (r) {
-      throw r instanceof i ? r : new i(
+      throw r instanceof _ ? r : new _(
         {
-          message: T.WrongTypeResponse(),
+          message: y.WrongTypeResponse(),
           status: s.status,
           statusText: s.statusText
         }
@@ -195,7 +197,7 @@ class k extends y {
     return this._fetch(u, r);
   }
 }
-class b extends y {
+class b extends w {
   _addHeaders(e, t) {
     let s = t == null ? void 0 : t.headers;
     if (this._token != null && (s || (s = new Headers()), this._addToken(s)), !s)
@@ -222,11 +224,11 @@ class b extends y {
     return t;
   }
   _createError(e) {
-    return new i({
+    return new _({
       message: e.statusText,
       status: e.status,
       statusText: e.statusText,
-      response: new h({
+      response: new l({
         data: this._formatResponse(e),
         status: e.status,
         statusText: e.statusText,
@@ -236,7 +238,7 @@ class b extends y {
   }
   _onload(e, t, s) {
     e.onload = () => {
-      e.status >= 200 && e.status <= 299 ? t(new h({
+      e.status >= 200 && e.status <= 299 ? t(new l({
         data: this._formatResponse(e),
         status: e.status,
         statusText: e.statusText,
@@ -270,8 +272,8 @@ class b extends y {
     return new Promise((a, n) => {
       const u = new XMLHttpRequest();
       u.responseType = (r == null ? void 0 : r.responseType) || "", u.open(e.toUpperCase(), this._createUrl(e, t, s)), this._addHeaders(u, r);
-      const w = s && (s instanceof FormData ? s : JSON.stringify(s));
-      this._onload(u, a, n), this._onerror(u, n), this._onprogress(u, r), u.send(w);
+      const i = s && (s instanceof FormData ? s : JSON.stringify(s));
+      this._onload(u, a, n), this._onerror(u, n), this._onprogress(u, r), u.send(i);
     });
   }
 }
@@ -293,14 +295,14 @@ class O {
   }
 }
 export {
-  i as ApiError,
-  h as ApiResponse,
+  _ as ApiError,
+  l as ApiResponse,
   q as BodyRequestMethod,
-  H as NoBodyMethods,
-  _ as NoBodyRequestMethod,
-  l as RequestMethod,
-  A as RequestMethods,
+  A as NoBodyMethods,
+  h as NoBodyRequestMethod,
+  c as RequestMethod,
+  H as RequestMethods,
   O as default,
-  c as isNoBodyRequestMethod,
+  T as isNoBodyRequestMethod,
   M as isRequestMethod
 };

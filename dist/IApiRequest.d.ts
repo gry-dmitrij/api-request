@@ -2,7 +2,7 @@ import { default as ApiResponse } from './ApiResponse';
 import { TBodyRequestMethod, TNoBodyRequestMethod } from './constants';
 export type ResponseType = 'arraybuffer' | 'blob' | 'json' | 'text';
 export type TNoBodyRequestParams = Record<string, string | number | boolean>;
-export type TBodyRequestParams = TNoBodyRequestParams | Record<string, any> | FormData;
+export type TBodyRequestParams = TNoBodyRequestParams | Record<string, any> | FormData | ReadableStream;
 export type TRequestParams = TNoBodyRequestParams | TBodyRequestParams;
 export type TRequestHeaders = [string, string][] | Record<string, string> | Headers;
 export interface ApiProgressEvent {
