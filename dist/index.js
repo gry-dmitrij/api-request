@@ -1,7 +1,7 @@
-var x = Object.defineProperty;
-var R = (o, e, t) => e in o ? x(o, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : o[e] = t;
-var d = (o, e, t) => R(o, typeof e != "symbol" ? e + "" : e, t);
-class _ extends Error {
+var R = Object.defineProperty;
+var q = (o, e, t) => e in o ? R(o, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : o[e] = t;
+var d = (o, e, t) => q(o, typeof e != "symbol" ? e + "" : e, t);
+class i extends Error {
   constructor({
     message: t,
     status: s,
@@ -27,21 +27,21 @@ class _ extends Error {
 const h = {
   get: "get",
   head: "head"
-}, q = {
+}, A = {
   post: "post",
   put: "put",
   delete: "delete"
-}, c = {
-  ...q,
+}, p = {
+  ...A,
   ...h
-}, A = /* @__PURE__ */ new Set([
+}, H = /* @__PURE__ */ new Set([
   ...Object.values(h),
   ...Object.values(h).map((o) => o.toUpperCase())
-]), H = /* @__PURE__ */ new Set([
-  ...Object.values(c),
-  ...Object.values(c).map((o) => o.toUpperCase())
-]), T = (o) => A.has(o), M = (o) => H.has(o);
-class y {
+]), k = /* @__PURE__ */ new Set([
+  ...Object.values(p),
+  ...Object.values(p).map((o) => o.toUpperCase())
+]), y = (o) => H.has(o), M = (o) => k.has(o);
+class w {
   static FormDataForNoBodyMethods() {
     return `Wrong params. FormData cannot be included in queries [${Object.values(h).reduce((t, s, r) => t + (r > 0 ? `, ${s}` : s), "")}]`;
   }
@@ -75,8 +75,8 @@ class l {
     return this._headers;
   }
 }
-const p = "Authorization";
-class w {
+const T = "Authorization";
+class x {
   constructor() {
     d(this, "_token");
   }
@@ -88,32 +88,33 @@ class w {
     Array.isArray(e) ? e.push([t, s]) : e instanceof Headers ? e.append(t, s) : e[t] = s;
   }
   _addToken(e) {
-    this._token != null && this._addHeader(e, p, this._token);
+    this._token != null && this._addHeader(e, T, this._token);
   }
   _addTokenIfNoExist(e) {
-    this._headersHas(e, p) || this._addToken(e);
+    this._headersHas(e, T) || this._addToken(e);
   }
   _addHeaderIfNoExist(e, t, s) {
     this._headersHas(e, t) || this._addHeader(e, t, s);
   }
   _createUrl(e, t, s) {
     const r = new URLSearchParams();
-    if (T(e)) {
+    if (y(e)) {
       if (s instanceof FormData)
-        throw new _(
+        throw new i(
           {
-            message: y.FormDataForNoBodyMethods(),
+            message: w.FormDataForNoBodyMethods(),
             status: 0,
             statusText: ""
           }
         );
-      s && Object.entries(s).forEach(([a, n]) => {
-        (Array.isArray(n) ? n : [n]).forEach((i) => {
-          (typeof i == "string" || typeof i == "number" || typeof i == "boolean") && r.append(a, i.toString());
+      s && Object.entries(s).forEach(([u, n]) => {
+        (Array.isArray(n) ? n : [n]).forEach((_) => {
+          (typeof _ == "string" || typeof _ == "number" || typeof _ == "boolean") && r.append(u, _.toString());
         });
       });
     }
-    return r.size ? `${t}?${r.toString()}` : t;
+    const a = r.toString();
+    return a ? `${t}?${a}` : t;
   }
   getToken() {
     return this._token;
@@ -122,13 +123,13 @@ class w {
     this._token = e;
   }
 }
-class k extends w {
+class b extends x {
   _createRequestInit(e, t, s) {
     const r = t && (t instanceof FormData || t instanceof ReadableStream) ? t : JSON.stringify(t), a = {
       method: e.toUpperCase(),
       headers: new Headers(),
       ...s,
-      ...!T(e) && {
+      ...!y(e) && {
         body: r
       }
     };
@@ -157,7 +158,7 @@ class k extends w {
       }
     }
     if (!e.ok)
-      throw new _(
+      throw new i(
         {
           message: e.statusText,
           status: e.status,
@@ -183,9 +184,9 @@ class k extends w {
         headers: s.headers
       });
     } catch (r) {
-      throw r instanceof _ ? r : new _(
+      throw r instanceof i ? r : new i(
         {
-          message: y.WrongTypeResponse(),
+          message: w.WrongTypeResponse(),
           status: s.status,
           statusText: s.statusText
         }
@@ -193,24 +194,24 @@ class k extends w {
     }
   }
   request(e, t, s, r) {
-    const a = this._createUrl(e, t, s), n = this._createRequestInit(e, s, r), u = new Request(a, n);
-    return this._fetch(u, r);
+    const a = this._createUrl(e, t, s), u = this._createRequestInit(e, s, r), n = new Request(a, u);
+    return this._fetch(n, r);
   }
 }
-class b extends w {
+class E extends x {
   _addHeaders(e, t) {
     let s = t == null ? void 0 : t.headers;
     if (this._token != null && (s || (s = new Headers()), this._addToken(s)), !s)
       return;
     const r = Array.isArray(s) ? s.values() : s instanceof Headers ? s.entries() : Object.entries(s);
-    for (const [a, n] of r)
-      e.setRequestHeader(a, n);
+    for (const [a, u] of r)
+      e.setRequestHeader(a, u);
   }
   _createHeaders(e) {
     const t = new Headers();
     return e.trim().split(/[\r\n]+/).forEach((r) => {
-      const a = r.split(": "), n = a.shift(), u = a.join(": ");
-      n && t.append(n, u);
+      const a = r.split(": "), u = a.shift(), n = a.join(": ");
+      u && t.append(u, n);
     }), t;
   }
   _formatResponse(e) {
@@ -224,7 +225,7 @@ class b extends w {
     return t;
   }
   _createError(e) {
-    return new _({
+    return new i({
       message: e.statusText,
       status: e.status,
       statusText: e.statusText,
@@ -269,17 +270,17 @@ class b extends w {
     };
   }
   request(e, t, s, r) {
-    return new Promise((a, n) => {
-      const u = new XMLHttpRequest();
-      u.responseType = (r == null ? void 0 : r.responseType) || "", u.open(e.toUpperCase(), this._createUrl(e, t, s)), this._addHeaders(u, r);
-      const i = s && (s instanceof FormData ? s : JSON.stringify(s));
-      this._onload(u, a, n), this._onerror(u, n), this._onprogress(u, r), u.send(i);
+    return new Promise((a, u) => {
+      const n = new XMLHttpRequest();
+      n.responseType = (r == null ? void 0 : r.responseType) || "", n.open(e.toUpperCase(), this._createUrl(e, t, s)), this._addHeaders(n, r);
+      const c = s && (s instanceof FormData ? s : JSON.stringify(s));
+      this._onload(n, a, u), this._onerror(n, u), this._onprogress(n, r), n.send(c);
     });
   }
 }
-class E {
+class N {
   static createRequestAdapter(e, t) {
-    return t != null && t.onUploadProgress || t != null && t.onDownloadProgress ? new b() : new k();
+    return t != null && t.onUploadProgress || t != null && t.onDownloadProgress ? new E() : new b();
   }
 }
 class O {
@@ -287,7 +288,7 @@ class O {
     d(this, "_token");
   }
   request(e, t, s, r) {
-    const a = E.createRequestAdapter(e, r);
+    const a = N.createRequestAdapter(e, r);
     return this._token && a.setToken(this._token), a.request(e, t, s, r);
   }
   setToken(e) {
@@ -295,14 +296,14 @@ class O {
   }
 }
 export {
-  _ as ApiError,
+  i as ApiError,
   l as ApiResponse,
-  q as BodyRequestMethod,
-  A as NoBodyMethods,
+  A as BodyRequestMethod,
+  H as NoBodyMethods,
   h as NoBodyRequestMethod,
-  c as RequestMethod,
-  H as RequestMethods,
+  p as RequestMethod,
+  k as RequestMethods,
   O as default,
-  T as isNoBodyRequestMethod,
+  y as isNoBodyRequestMethod,
   M as isRequestMethod
 };
