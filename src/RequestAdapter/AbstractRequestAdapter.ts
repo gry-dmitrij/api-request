@@ -82,7 +82,8 @@ export default abstract class AbstractRequestAdapter implements IRequestAdapter 
         })
       }
     }
-    return searchParams.size ? `${url}?${searchParams.toString()}` : url
+    const paramsStr = searchParams.toString()
+    return paramsStr ? `${url}?${paramsStr}` : url
   }
 
   getToken() {
