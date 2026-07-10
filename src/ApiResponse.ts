@@ -1,4 +1,4 @@
-import { ApiResponseProps } from './IApiResponse'
+import { ApiResponseProps } from '@/IApiResponse'
 
 export default class ApiResponse<T = any> {
   private readonly _data: T

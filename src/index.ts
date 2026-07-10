@@ -1,10 +1,10 @@
-import ApiRequest from './ApiRequest';
+import ApiRequest from '@/ApiRequest';
 import type {
   TRequestMethod,
   TNoBodyRequestMethod,
   TBodyRequestMethod
-} from './constants'
-import { ApiResponseProps } from './IApiResponse'
+} from '@/constants'
+import { ApiResponseProps } from '@/IApiResponse'
 import {
   ResponseType,
   TNoBodyRequestParams,
@@ -14,21 +14,21 @@ import {
   ApiProgressEvent,
   TRequestConfig,
   IRequestFunction
-} from './IApiRequest'
-import { ApiErrorProps } from './IApiError'
+} from '@/IApiRequest'
+import { ApiErrorProps } from '@/IApiError'
 import {
   NoBodyRequestMethod,
   BodyRequestMethod,
   RequestMethod,
   NoBodyMethods,
   RequestMethods
-} from './constants'
-import ApiResponse from './ApiResponse'
-import ApiError from './ApiError';
+} from '@/constants'
+import ApiResponse from '@/ApiResponse'
+import ApiError from '@/ApiError';
 import {
   isRequestMethod,
   isNoBodyRequestMethod
-} from './predicates'
+} from '@/predicates'
 
 export default ApiRequest
 

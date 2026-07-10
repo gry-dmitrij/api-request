@@ -4,38 +4,30 @@ import {
   TRequestConfig,
   TRequestParams
 } from '@/IApiRequest';
-import { isNoBodyRequestMethod } from '@/predicates';
 import { ErrorMessage } from '@/ErrorMessage';
 import ApiResponse from '@/ApiResponse';
 
 import AbstractRequestAdapter from './AbstractRequestAdapter';
-import {
-  DataType
-} from '@/RequestAdapter/IRequestAdapter';
 
 export default class FetchAdapter extends AbstractRequestAdapter {
   private _createRequestInit(method: TRequestMethod, params?: TRequestParams, config?: TRequestConfig): RequestInit {
-    const body = params && (params instanceof FormData || params instanceof ReadableStream)
-      ? params
-      : JSON.stringify(params)
-    const requestInit = {
+    const headers = new Headers(config?.headers)
+    const { body, isJson } = this._createBody(method, params)
+    this._addToken(headers)
+    this._addJsonContentType(headers, isJson)
+    return {
       method: method.toUpperCase(),
-      headers: new Headers(),
-      ...config,
-      ...(!isNoBodyRequestMethod(method) && {
-        body
-      })
+      headers,
+      ...(body !== undefined && { body: body as BodyInit })
     }
-    this._addTokenIfNoExist(requestInit.headers)
-    return requestInit
   }
 
   private async _getDataFromResponse(
     response: Response,
     config?: TRequestConfig
-  ): Promise<any> {
+  ): Promise<unknown> {
     const type = config?.responseType
-    let data: DataType<typeof type> = ''
+    let data: unknown
     switch (type) {
       case 'blob':
       case 'json':
@@ -45,40 +37,28 @@ export default class FetchAdapter extends AbstractRequestAdapter {
         data = await response.arrayBuffer()
         break
       case 'text':
-      default: {
-        const text = await response.text()
-        data = text
-        if (config?.responseType == null) {
-          try {
-            data = JSON.parse(text)
-          } catch (e) {
-            data = text
-          }
-        }
-      }
+        data = await response.text()
+        break
+      default:
+        // No explicit responseType: try to parse JSON, fall back to raw text.
+        data = this._parseData(await response.text())
     }
     if (!response.ok) {
-      throw new ApiError(
-        {
-          message: response.statusText,
-          status: response.status,
-          statusText: response.statusText,
-          response: new ApiResponse({
-            data,
-            status: response.status,
-            statusText: response.statusText,
-            headers: response.headers
-          })
-        }
+      throw this._createResponseError(
+        response.statusText,
+        response.status,
+        response.statusText,
+        data,
+        response.headers
       )
     }
-    return Promise.resolve(data)
+    return data
   }
 
   private async _fetch<T = any>(request: Request, config?: TRequestConfig): Promise<ApiResponse<T>> {
     const response = await fetch(request)
     try {
-      const data: T = await this._getDataFromResponse(response, config)
+      const data = await this._getDataFromResponse(response, config) as T
       return new ApiResponse<T>({
         data,
         status: response.status,

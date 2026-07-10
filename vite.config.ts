@@ -11,7 +11,7 @@ export default defineConfig({
       fileName: 'index',
     },
   },
-  plugins: [dts()],
+  plugins: [dts({ exclude: ['src/**/*.test.ts', 'src/test-utils/**'] })],
   resolve: {
     alias: {
       '@': resolve(__dirname, "src"),

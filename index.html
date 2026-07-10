@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>api-request · playground</title>
+    <link rel="stylesheet" href="/playground/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app__header">
+        <h1>api-request</h1>
+        <p class="app__subtitle">Playground for manual testing of the library (not published to npm)</p>
+      </header>
+
+      <section class="grid">
+        <form id="request-form" class="card" autocomplete="off">
+          <h2 class="card__title">Request</h2>
+
+          <div class="row">
+            <label class="field field--method">
+              <span>Method</span>
+              <select id="method">
+                <option value="get">GET</option>
+                <option value="head">HEAD</option>
+                <option value="post">POST</option>
+                <option value="put">PUT</option>
+                <option value="delete">DELETE</option>
+              </select>
+            </label>
+            <label class="field field--url">
+              <span>URL</span>
+              <input id="url" type="text" value="https://jsonplaceholder.typicode.com/todos/1" />
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Token (sent as <code>Authorization</code> via <code>setToken</code>)</span>
+            <input id="token" type="text" placeholder="Bearer …" />
+          </label>
+
+          <label class="field">
+            <span>Params (JSON) — query for get/head, body otherwise</span>
+            <textarea id="params" rows="5" placeholder='{ "userId": 1 }'></textarea>
+          </label>
+
+          <label class="field">
+            <span>Headers (JSON object)</span>
+            <textarea id="headers" rows="3" placeholder='{ "X-Custom": "value" }'></textarea>
+          </label>
+
+          <div class="row">
+            <label class="field">
+              <span>responseType</span>
+              <select id="responseType">
+                <option value="">auto (default)</option>
+                <option value="json">json</option>
+                <option value="text">text</option>
+                <option value="blob">blob</option>
+                <option value="arraybuffer">arraybuffer</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Progress (uses XMLHttpRequest)</span>
+              <select id="progress">
+                <option value="">none (fetch)</option>
+                <option value="upload">onUploadProgress</option>
+                <option value="download">onDownloadProgress</option>
+              </select>
+            </label>
+          </div>
+
+          <button id="send" type="submit">Send request</button>
+          <p id="form-error" class="form-error" hidden></p>
+        </form>
+
+        <section class="card">
+          <h2 class="card__title">Response</h2>
+
+          <div id="progress-wrap" class="progress" hidden>
+            <div class="progress__bar"><span id="progress-bar"></span></div>
+            <span id="progress-label" class="progress__label"></span>
+          </div>
+
+          <div id="status" class="status" hidden>
+            <span id="status-dot" class="status__dot"></span>
+            <span id="status-text"></span>
+          </div>
+
+          <details class="block" open>
+            <summary>Data</summary>
+            <pre id="data" class="output">—</pre>
+          </details>
+
+          <details class="block">
+            <summary>Headers</summary>
+            <pre id="response-headers" class="output">—</pre>
+          </details>
+
+          <details id="error-block" class="block block--error" hidden>
+            <summary>ApiError</summary>
+            <pre id="error-output" class="output"></pre>
+          </details>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="/playground/main.ts"></script>
+  </body>
+</html>

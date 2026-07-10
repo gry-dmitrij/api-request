@@ -19,11 +19,15 @@ export type TRequestMethod = TLowRequestMethod | Uppercase<TLowRequestMethod>
 export type TNoBodyRequestMethod = typeof NoBodyRequestMethod[keyof typeof NoBodyRequestMethod]
 export type TBodyRequestMethod = typeof BodyRequestMethod[keyof typeof BodyRequestMethod]
 
-export const NoBodyMethods = new Set<TRequestMethod>([
-  ...Object.values(NoBodyRequestMethod),
-  ...Object.values(NoBodyRequestMethod).map(method => method.toUpperCase() as TRequestMethod)
-])
-export const RequestMethods = new Set<TRequestMethod>([
-  ...Object.values(RequestMethod),
-  ...Object.values(RequestMethod).map(method => method.toUpperCase() as TRequestMethod)
-])
+// Builds a Set holding both the lower- and upper-cased form of every method.
+const withUpperCase = (methods: readonly TLowRequestMethod[]): Set<TRequestMethod> => {
+  const result = new Set<TRequestMethod>()
+  methods.forEach(method => {
+    result.add(method)
+    result.add(method.toUpperCase() as TRequestMethod)
+  })
+  return result
+}
+
+export const NoBodyMethods = withUpperCase(Object.values(NoBodyRequestMethod))
+export const RequestMethods = withUpperCase(Object.values(RequestMethod))

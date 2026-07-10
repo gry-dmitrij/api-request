@@ -1,16 +1,18 @@
 import {
   NoBodyRequestMethod
-} from './constants';
+} from '@/constants';
 
 export class ErrorMessage {
   static FormDataForNoBodyMethods() {
-    const methods = Object.values(NoBodyRequestMethod).reduce((result, method, index) => {
-      return result + (index > 0 ?  `, ${method}` : method)
-    }, '')
+    const methods = Object.values(NoBodyRequestMethod).join(', ')
     return `Wrong params. FormData cannot be included in queries [${methods}]`
   }
 
   static WrongTypeResponse() {
     return 'Wrong type response'
+  }
+
+  static ReadableStreamNotSupported() {
+    return 'ReadableStream body is not supported by the XMLHttpRequest adapter'
   }
 }

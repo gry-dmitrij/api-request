@@ -1,4 +1,4 @@
-import ApiResponse from './ApiResponse';
+import ApiResponse from '@/ApiResponse';
 export interface ApiErrorProps<T = any> {
   message: string,
   status: number,

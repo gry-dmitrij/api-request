@@ -2,10 +2,11 @@ import ApiResponse from '@/ApiResponse';
 import {
   TBodyRequestMethod,
   TNoBodyRequestMethod
-} from './constants';
+} from '@/constants';
 
 export type ResponseType = 'arraybuffer' | 'blob' | 'json' | 'text'
-export type TNoBodyRequestParams = Record<string, string | number | boolean>
+export type TQueryParamValue = string | number | boolean
+export type TNoBodyRequestParams = Record<string, TQueryParamValue | TQueryParamValue[]>
 export type TBodyRequestParams = TNoBodyRequestParams | Record<string, any> | FormData | ReadableStream
 export type TRequestParams = TNoBodyRequestParams | TBodyRequestParams
 export type TRequestHeaders = [string, string][] | Record<string, string> | Headers
@@ -19,8 +20,6 @@ export interface ApiProgressEvent {
 export type TRequestConfig = {
   responseType?: ResponseType
   headers?: TRequestHeaders
-  onUploadProgress?: (e: ApiProgressEvent) => void
-  onDownloadProgress?: (e: ApiProgressEvent) => void
 } & ({
   onUploadProgress?: (e: ApiProgressEvent) => void
   onDownloadProgress?: never
