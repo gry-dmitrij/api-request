@@ -15,14 +15,14 @@ import ApiResponse from '@/ApiResponse';
 export default class ApiRequest {
   private _token: string | undefined
 
-  // No-body methods (get/head) only accept query params.
+  // No-body methods (get/head/delete) only accept query params.
   request<T = any>(
     method: TNoBodyRequestMethod,
     url: string,
     params?: TNoBodyRequestParams,
     config?: TRequestConfig
   ): Promise<ApiResponse<T>>
-  // Body methods (post/put/delete) accept a request body.
+  // Body methods (post/put/patch) accept a request body.
   request<T = any>(
     method: TBodyRequestMethod,
     url: string,

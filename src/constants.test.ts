@@ -16,12 +16,17 @@ describe('constants', () => {
   })
 
   test('NoBodyMethods holds lower- and upper-cased no-body methods', () => {
-    expect([...NoBodyMethods].sort()).toEqual(['GET', 'HEAD', 'get', 'head'].sort())
+    expect([...NoBodyMethods].sort()).toEqual(
+      ['GET', 'HEAD', 'DELETE', 'get', 'head', 'delete'].sort()
+    )
   })
 
   test('RequestMethods holds lower- and upper-cased forms of every method', () => {
     expect([...RequestMethods].sort()).toEqual(
-      ['get', 'head', 'post', 'put', 'delete', 'GET', 'HEAD', 'POST', 'PUT', 'DELETE'].sort()
+      [
+        'get', 'head', 'delete', 'post', 'put', 'patch',
+        'GET', 'HEAD', 'DELETE', 'POST', 'PUT', 'PATCH'
+      ].sort()
     )
   })
 })

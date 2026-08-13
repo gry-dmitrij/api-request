@@ -55,6 +55,37 @@ describe('XMLHttpAdapter', () => {
     expect(response.data.body).toEqual({ name: 'Bob' })
   })
 
+  test('sends a JSON body with Content-Type: application/json for patch', async () => {
+    server.use(
+      http.patch(createUrl('/items/1'), async ({ request }) => HttpResponse.json({
+        contentType: request.headers.get('content-type'),
+        body: await request.json()
+      }))
+    )
+
+    const response = await createAdapter().request('patch', createUrl('/items/1'), { name: 'Bob' })
+    expect(response.data.contentType).toBe('application/json')
+    expect(response.data.body).toEqual({ name: 'Bob' })
+  })
+
+  test('sends DELETE params as query string without a body', async () => {
+    server.use(
+      http.delete(createUrl('/items'), ({ request }) => {
+        const url = new URL(request.url)
+        return HttpResponse.json({
+          hasBody: request.body !== null,
+          contentType: request.headers.get('content-type'),
+          query: Object.fromEntries(url.searchParams)
+        })
+      })
+    )
+
+    const response = await createAdapter().request('delete', createUrl('/items'), { id: 5 })
+    expect(response.data.hasBody).toBe(false)
+    expect(response.data.contentType).toBeNull()
+    expect(response.data.query).toEqual({ id: '5' })
+  })
+
   test('parses response headers into a Headers instance', async () => {
     server.use(
       http.get(createUrl('/items'), () =>

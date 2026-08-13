@@ -4,7 +4,7 @@ import { ErrorMessage } from '@/ErrorMessage'
 describe('ErrorMessage', () => {
   test('FormDataForNoBodyMethods lists the no-body methods', () => {
     expect(ErrorMessage.FormDataForNoBodyMethods()).toBe(
-      'Wrong params. FormData cannot be included in queries [get, head]'
+      'Wrong params. FormData cannot be included in queries [get, head, delete]'
     )
   })
 

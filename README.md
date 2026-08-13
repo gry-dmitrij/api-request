@@ -12,7 +12,7 @@ A tiny, dependency-free, axios-like HTTP client for the browser.
 - **Two adapters, chosen automatically** — `fetch` by default, `XMLHttpRequest` when you need upload/download progress.
 - **Upload & download progress** via `onUploadProgress` / `onDownloadProgress`.
 - **Automatic JSON** — plain objects are serialized (with `Content-Type: application/json`), responses are parsed as JSON with a transparent fallback to text.
-- **Query params, including arrays** for `get` / `head`.
+- **Query params, including arrays** for `get` / `head` / `delete`.
 - **Raw bodies** — `FormData`, `Blob`, `URLSearchParams`, `ArrayBuffer`, strings and `ReadableStream` are sent as-is.
 - **Bearer token helper** via `setToken`.
 - **Typed result and error** — `ApiResponse` and `ApiError`.
@@ -50,19 +50,19 @@ Creates a client instance. Each `request` call builds a fresh adapter under the 
 
 | Argument  | Type                              | Description                                                                 |
 | --------- | --------------------------------- | --------------------------------------------------------------------------- |
-| `method`  | `'get' \| 'head' \| 'post' \| 'put' \| 'delete'` | HTTP method. Case-insensitive (`'GET'` works too).           |
+| `method`  | `'get' \| 'head' \| 'delete' \| 'post' \| 'put' \| 'patch'` | HTTP method. Case-insensitive (`'GET'` works too). |
 | `url`     | `string`                          | Absolute or relative URL. There is no `baseURL` option — pass the full URL. |
-| `params`  | see below                         | Query params for `get`/`head`, request body for the other methods.          |
+| `params`  | see below                         | Query params for `get`/`head`/`delete`, request body for the other methods. |
 | `config`  | `TRequestConfig`                  | Optional response type, headers and progress callbacks.                     |
 
-The method is overloaded: `get` / `head` accept only query params, while `post` / `put` / `delete` accept a request body.
+The method is overloaded: `get` / `head` / `delete` accept only query params, while `post` / `put` / `patch` accept a request body.
 
 Resolves with an [`ApiResponse<T>`](#apiresponset) on a 2xx status and rejects with an [`ApiError<T>`](#apierrort) otherwise.
 
 #### `params`
 
-- **`get` / `head`** — serialized into the query string. Values may be `string | number | boolean` or arrays of them (each array item becomes a repeated key: `{ tags: ['a', 'b'] }` → `?tags=a&tags=b`). Passing `FormData` throws an `ApiError`.
-- **`post` / `put` / `delete`** — used as the request body:
+- **`get` / `head` / `delete`** — serialized into the query string; these methods never send a request body. Values may be `string | number | boolean` or arrays of them (each array item becomes a repeated key: `{ tags: ['a', 'b'] }` → `?tags=a&tags=b`). Passing `FormData` throws an `ApiError`.
+- **`post` / `put` / `patch`** — used as the request body:
   - a plain object is `JSON.stringify`-ed and sent with `Content-Type: application/json`;
   - `FormData`, `Blob`, `URLSearchParams`, `ArrayBuffer` and strings are sent unchanged;
   - `ReadableStream` is supported by the `fetch` adapter only (see [Adapter selection](#adapter-selection)).
@@ -152,6 +152,24 @@ const res = await api.request('post', '/api/users', {
 // Sent as application/json
 ```
 
+### PATCH JSON
+
+```ts
+const res = await api.request('patch', '/api/users/1', {
+  name: 'Bob',
+});
+// Sent as application/json
+```
+
+### DELETE with query params
+
+```ts
+const res = await api.request('delete', '/api/users', {
+  id: 5, // -> DELETE /api/users?id=5
+});
+// No request body is sent
+```
+
 ### Upload a file with progress
 
 ```ts
@@ -213,6 +231,13 @@ npm run pack:check   # preview the published npm tarball contents
 ```
 
 The playground and tests are development-only — the published package contains just the `dist/` build.
+
+## Breaking changes
+
+### 0.1.0
+
+- **`delete` no longer sends a request body.** It moved from `BodyRequestMethod` to `NoBodyRequestMethod`, so `params` are now serialized into the query string instead of a JSON body, and `Content-Type: application/json` is no longer added. Passing `FormData` to `delete` now throws an `ApiError`. If your API expects a body on `DELETE`, move that data into the query string.
+- **`patch` added** — behaves like `post` / `put` (accepts a request body).
 
 ## License
 

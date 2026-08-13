@@ -56,6 +56,32 @@ describe('ApiRequest', () => {
     expect(response.data).toEqual({ name: 'Bob' })
   })
 
+  test('routes a patch request with a JSON body', async () => {
+    server.use(
+      http.patch(createUrl('/items/1'), async ({ request }) => HttpResponse.json(await request.json()))
+    )
+
+    const response = await new ApiRequest().request('patch', createUrl('/items/1'), { name: 'Bob' })
+    expect(response.status).toBe(200)
+    expect(response.data).toEqual({ name: 'Bob' })
+  })
+
+  test('sends delete params as query string without a body', async () => {
+    server.use(
+      http.delete(createUrl('/items'), ({ request }) => {
+        const url = new URL(request.url)
+        return HttpResponse.json({
+          hasBody: request.body !== null,
+          query: Object.fromEntries(url.searchParams)
+        })
+      })
+    )
+
+    const response = await new ApiRequest().request('delete', createUrl('/items'), { id: 5 })
+    expect(response.data.hasBody).toBe(false)
+    expect(response.data.query).toEqual({ id: '5' })
+  })
+
   test('rejects with an ApiError on error status', async () => {
     server.use(http.get(createUrl('/boom'), () => HttpResponse.json({}, { status: 500 })))
 

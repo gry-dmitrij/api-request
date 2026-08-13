@@ -76,19 +76,26 @@ describe('AbstractRequestAdapter', () => {
       expect(createAdapter().createUrl('get', '/api')).toBe('/api')
     })
 
+    test('appends query params for delete', () => {
+      expect(createAdapter().createUrl('delete', '/api', { id: 5 })).toBe('/api?id=5')
+    })
+
     test('ignores params for body methods (they go into the body)', () => {
       expect(createAdapter().createUrl('post', '/api', { a: 1 })).toBe('/api')
+      expect(createAdapter().createUrl('patch', '/api', { a: 1 })).toBe('/api')
     })
 
     test('throws an ApiError when FormData is used with a no-body method', () => {
       const formData = new FormData()
       expect(() => createAdapter().createUrl('get', '/api', formData)).toThrow(ApiError)
+      expect(() => createAdapter().createUrl('delete', '/api', formData)).toThrow(ApiError)
     })
   })
 
   describe('_createBody', () => {
     test('returns undefined body for no-body methods', () => {
       expect(createAdapter().createBody('get', { a: 1 })).toEqual({ body: undefined, isJson: false })
+      expect(createAdapter().createBody('delete', { a: 1 })).toEqual({ body: undefined, isJson: false })
     })
 
     test('returns undefined body when params are nullish', () => {
@@ -97,6 +104,7 @@ describe('AbstractRequestAdapter', () => {
 
     test('JSON-serializes plain objects and flags them as json', () => {
       expect(createAdapter().createBody('post', { a: 1 })).toEqual({ body: '{"a":1}', isJson: true })
+      expect(createAdapter().createBody('patch', { a: 1 })).toEqual({ body: '{"a":1}', isJson: true })
     })
 
     test('passes FormData through without the json flag', () => {

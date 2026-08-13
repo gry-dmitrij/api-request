@@ -1,12 +1,13 @@
 export const NoBodyRequestMethod = {
   get: 'get',
   head: 'head',
+  delete: 'delete',
 } as const
 
 export const BodyRequestMethod = {
   post: 'post',
   put: 'put',
-  delete: 'delete'
+  patch: 'patch'
 } as const
 
 export const RequestMethod = {
