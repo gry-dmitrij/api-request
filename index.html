@@ -71,7 +71,27 @@
             </label>
           </div>
 
-          <button id="send" type="submit">Send request</button>
+          <div class="row">
+            <label class="field">
+              <span><code>config.timeout</code> in ms — empty or <code>0</code> means no limit</span>
+              <input id="timeout" type="number" min="0" step="10" placeholder="e.g. 1000" />
+            </label>
+            <label class="field">
+              <span><code>new ApiRequest({ timeout })</code> — instance default, overridden above</span>
+              <input id="instance-timeout" type="number" min="0" step="10" placeholder="none" />
+            </label>
+          </div>
+
+          <p class="hint">
+            To see a timeout, point the URL at a slow endpoint such as
+            <code>https://httpbin.org/delay/5</code> and set a timeout of <code>1000</code>.
+            Press <em>Cancel</em> while a request is running to abort it through <code>config.signal</code>.
+          </p>
+
+          <div class="actions">
+            <button id="send" type="submit">Send request</button>
+            <button id="cancel" type="button" class="button--ghost" disabled>Cancel</button>
+          </div>
           <p id="form-error" class="form-error" hidden></p>
         </form>
 

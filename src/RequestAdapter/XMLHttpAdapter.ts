@@ -6,6 +6,7 @@ import {
 } from '@/IApiRequest';
 import { ErrorMessage } from '@/ErrorMessage';
 import ApiResponse from '@/ApiResponse';
+import { createTimeoutError } from '@/Cancellation';
 import AbstractRequestAdapter from './AbstractRequestAdapter';
 
 export default class XMLHttpAdapter extends AbstractRequestAdapter {
@@ -86,26 +87,77 @@ export default class XMLHttpAdapter extends AbstractRequestAdapter {
     params?: TRequestParams,
     config?: TRequestConfig
   ): Promise<ApiResponse<T>> {
+    // No JS timer here: XMLHttpRequest has a native `timeout`. The scope only
+    // carries the external signal.
+    const cancel = this._createCancellation({ signal: config?.signal })
     return new Promise<ApiResponse<T>>((resolve, reject) => {
-      const { body, isJson } = this._createBody(method, params)
-      if (body instanceof ReadableStream) {
-        throw new ApiError({
-          message: ErrorMessage.ReadableStreamNotSupported(),
-          status: 0,
-          statusText: ''
-        })
+      // XHR can fire several terminal events (a timeout followed by an abort, an
+      // error after a non-2xx load), so every exit goes through these guards.
+      let settled = false
+      let unsubscribe: (() => void) | undefined
+      const settle = () => {
+        settled = true
+        unsubscribe?.()
+        unsubscribe = undefined
+        cancel.dispose()
       }
-      const http = new XMLHttpRequest()
-      http.responseType = config?.responseType || ''
-      http.open(method.toUpperCase(), this._createUrl(method, url, params))
-      const headers = new Headers(config?.headers)
-      this._addToken(headers)
-      this._addJsonContentType(headers, isJson)
-      this._addHeaders(http, headers)
-      this._onload<T>(http, resolve, reject)
-      this._onerror(http, reject)
-      this._onprogress(http, config)
-      http.send(body)
+      const ok = (response: ApiResponse<T>) => {
+        if (settled) {
+          return
+        }
+        settle()
+        resolve(response)
+      }
+      const fail = (reason?: any) => {
+        if (settled) {
+          return
+        }
+        settle()
+        reject(reason)
+      }
+
+      // Wraps the synchronous throws too (_createUrl, open, send), so the scope
+      // is always disposed of.
+      try {
+        if (cancel.aborted) {
+          fail(cancel.toError())
+          return
+        }
+        const { body, isJson } = this._createBody(method, params)
+        if (body instanceof ReadableStream) {
+          fail(new ApiError({
+            message: ErrorMessage.ReadableStreamNotSupported(),
+            status: 0,
+            statusText: ''
+          }))
+          return
+        }
+        const http = new XMLHttpRequest()
+        http.responseType = config?.responseType || ''
+        http.open(method.toUpperCase(), this._createUrl(method, url, params))
+        if (config?.timeout && config.timeout > 0) {
+          http.timeout = config.timeout
+        }
+        const headers = new Headers(config?.headers)
+        this._addToken(headers)
+        this._addJsonContentType(headers, isJson)
+        this._addHeaders(http, headers)
+        this._onload<T>(http, ok, fail)
+        this._onerror(http, fail)
+        this._onprogress(http, config)
+        http.ontimeout = () => fail(createTimeoutError(config?.timeout))
+        http.onabort = () => fail(cancel.toError())
+        unsubscribe = cancel.onAbort(() => http.abort())
+        // Drop the subscription as soon as the request is over: a long-lived
+        // external signal would otherwise pile up references to finished requests.
+        http.onloadend = () => {
+          unsubscribe?.()
+          unsubscribe = undefined
+        }
+        http.send(body)
+      } catch (e) {
+        fail(e)
+      }
     })
   }
 }

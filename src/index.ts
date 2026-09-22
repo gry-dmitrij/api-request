@@ -2,7 +2,8 @@ import ApiRequest from '@/ApiRequest';
 import type {
   TRequestMethod,
   TNoBodyRequestMethod,
-  TBodyRequestMethod
+  TBodyRequestMethod,
+  TErrorCode
 } from '@/constants'
 import { ApiResponseProps } from '@/IApiResponse'
 import {
@@ -13,6 +14,7 @@ import {
   TRequestHeaders,
   ApiProgressEvent,
   TRequestConfig,
+  ApiRequestProps,
   IRequestFunction
 } from '@/IApiRequest'
 import { ApiErrorProps } from '@/IApiError'
@@ -21,13 +23,16 @@ import {
   BodyRequestMethod,
   RequestMethod,
   NoBodyMethods,
-  RequestMethods
+  RequestMethods,
+  ErrorCode
 } from '@/constants'
 import ApiResponse from '@/ApiResponse'
 import ApiError from '@/ApiError';
 import {
   isRequestMethod,
-  isNoBodyRequestMethod
+  isNoBodyRequestMethod,
+  isTimeoutError,
+  isAbortedError
 } from '@/predicates'
 
 export default ApiRequest
@@ -38,16 +43,20 @@ export {
   RequestMethod,
   NoBodyMethods,
   RequestMethods,
+  ErrorCode,
   ApiResponse,
   ApiError,
   isRequestMethod,
-  isNoBodyRequestMethod
+  isNoBodyRequestMethod,
+  isTimeoutError,
+  isAbortedError
 }
 
 export type {
   TRequestMethod,
   TNoBodyRequestMethod,
   TBodyRequestMethod,
+  TErrorCode,
   ApiResponseProps,
   ResponseType,
   TNoBodyRequestParams,
@@ -56,6 +65,7 @@ export type {
   TRequestHeaders,
   ApiProgressEvent,
   TRequestConfig,
+  ApiRequestProps,
   IRequestFunction,
   ApiErrorProps
 }

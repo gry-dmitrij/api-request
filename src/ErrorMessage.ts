@@ -15,4 +15,12 @@ export class ErrorMessage {
   static ReadableStreamNotSupported() {
     return 'ReadableStream body is not supported by the XMLHttpRequest adapter'
   }
+
+  static Timeout(timeout?: number) {
+    return timeout ? `Timeout of ${timeout}ms exceeded` : 'Timeout exceeded'
+  }
+
+  static Aborted() {
+    return 'Request aborted'
+  }
 }

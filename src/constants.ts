@@ -32,3 +32,11 @@ const withUpperCase = (methods: readonly TLowRequestMethod[]): Set<TRequestMetho
 
 export const NoBodyMethods = withUpperCase(Object.values(NoBodyRequestMethod))
 export const RequestMethods = withUpperCase(Object.values(RequestMethod))
+
+// Machine-readable markers for errors that never reached the server.
+export const ErrorCode = {
+  timeout: 'timeout',
+  aborted: 'aborted'
+} as const
+
+export type TErrorCode = typeof ErrorCode[keyof typeof ErrorCode]

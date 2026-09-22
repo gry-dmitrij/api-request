@@ -3,12 +3,15 @@ import ApiRequest, {
   ApiError,
   ApiResponse,
   BodyRequestMethod,
+  ErrorCode,
   NoBodyMethods,
   NoBodyRequestMethod,
   RequestMethod,
   RequestMethods,
+  isAbortedError,
   isNoBodyRequestMethod,
-  isRequestMethod
+  isRequestMethod,
+  isTimeoutError
 } from '@/index'
 
 describe('public API (index)', () => {
@@ -27,5 +30,19 @@ describe('public API (index)', () => {
     expect(RequestMethods).toBeInstanceOf(Set)
     expect(isNoBodyRequestMethod('get')).toBe(true)
     expect(isRequestMethod('post')).toBe(true)
+  })
+
+  test('re-exports the cancellation members', () => {
+    expect(ErrorCode).toEqual({ timeout: 'timeout', aborted: 'aborted' })
+    expect(isTimeoutError(new ApiError({
+      message: '', status: 0, statusText: '', code: ErrorCode.timeout
+    }))).toBe(true)
+    expect(isAbortedError(new ApiError({
+      message: '', status: 0, statusText: '', code: ErrorCode.aborted
+    }))).toBe(true)
+  })
+
+  test('accepts a default timeout in the constructor', () => {
+    expect(new ApiRequest({ timeout: 1000 })).toBeInstanceOf(ApiRequest)
   })
 })

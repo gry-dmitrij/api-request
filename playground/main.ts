@@ -1,6 +1,8 @@
 import ApiRequest, {
   ApiError,
   ApiResponse,
+  isAbortedError,
+  isTimeoutError,
   type ApiProgressEvent,
   type ResponseType,
   type TRequestConfig,
@@ -24,7 +26,10 @@ const paramsEl = $<HTMLTextAreaElement>('params')
 const headersEl = $<HTMLTextAreaElement>('headers')
 const responseTypeEl = $<HTMLSelectElement>('responseType')
 const progressEl = $<HTMLSelectElement>('progress')
+const timeoutEl = $<HTMLInputElement>('timeout')
+const instanceTimeoutEl = $<HTMLInputElement>('instance-timeout')
 const sendBtn = $<HTMLButtonElement>('send')
+const cancelBtn = $<HTMLButtonElement>('cancel')
 
 const formError = $<HTMLParagraphElement>('form-error')
 const statusEl = $<HTMLDivElement>('status')
@@ -37,7 +42,35 @@ const progressWrap = $<HTMLDivElement>('progress-wrap')
 const progressBar = $<HTMLSpanElement>('progress-bar')
 const progressLabel = $<HTMLSpanElement>('progress-label')
 
-const apiRequest = new ApiRequest()
+// Reads a timeout input: empty means "not set" so the instance default can apply,
+// while an explicit 0 lifts it.
+const readTimeout = (input: HTMLInputElement, label: string): number | undefined => {
+  const raw = input.value.trim()
+  if (!raw) {
+    return undefined
+  }
+  const value = Number(raw)
+  if (!Number.isFinite(value) || value < 0) {
+    throw new Error(`${label}: must be a non-negative number of milliseconds`)
+  }
+  return value
+}
+
+let instanceTimeout: number | undefined
+let apiRequest = new ApiRequest()
+
+// The default lives on the instance, so changing it means building a new client.
+const syncInstance = () => {
+  const next = readTimeout(instanceTimeoutEl, 'Instance timeout')
+  if (next === instanceTimeout) {
+    return
+  }
+  instanceTimeout = next
+  apiRequest = new ApiRequest(next === undefined ? undefined : { timeout: next })
+}
+
+// Cancels the in-flight request; kept around so the Cancel button can reach it.
+let inFlight: AbortController | undefined
 
 // Parses a textarea holding JSON; empty input yields undefined.
 const parseJson = (raw: string, label: string): unknown => {
@@ -101,8 +134,17 @@ const onProgress = (e: ApiProgressEvent) => {
     : `${e.loaded} bytes`
 }
 
-const buildConfig = (): TRequestConfig => {
-  const config: TRequestConfig = {}
+// Built without the progress callbacks: spreading the full TRequestConfig union
+// would keep both callback keys around and break their mutual exclusion.
+interface BaseConfig {
+  signal: AbortSignal
+  responseType?: ResponseType
+  headers?: TRequestConfig['headers']
+  timeout?: number
+}
+
+const buildConfig = (signal: AbortSignal): TRequestConfig => {
+  const config: BaseConfig = { signal }
   const responseType = responseTypeEl.value as ResponseType | ''
   if (responseType) {
     config.responseType = responseType
@@ -110,6 +152,10 @@ const buildConfig = (): TRequestConfig => {
   const headers = parseJson(headersEl.value, 'Headers')
   if (headers) {
     config.headers = headers as TRequestConfig['headers']
+  }
+  const timeout = readTimeout(timeoutEl, 'Timeout')
+  if (timeout !== undefined) {
+    config.timeout = timeout
   }
   const progress = progressEl.value
   if (progress === 'upload') {
@@ -129,11 +175,19 @@ const renderResponse = (response: ApiResponse) => {
 
 const renderError = (error: unknown) => {
   if (error instanceof ApiError) {
-    showStatus(error.status, error.statusText, false)
+    // A timeout or a cancellation never reached the server: status is 0 and the
+    // code is the only thing that tells them apart.
+    const label = isTimeoutError(error)
+      ? 'timed out'
+      : isAbortedError(error)
+        ? 'cancelled'
+        : error.statusText
+    showStatus(error.status, label, false)
     const details = {
       message: error.message,
       status: error.status,
       statusText: error.statusText,
+      code: error.code,
       responseData: error.response ? dataToText(error.response.data) : undefined
     }
     errorBlock.hidden = false
@@ -162,11 +216,13 @@ form.addEventListener('submit', async (event) => {
     return
   }
 
+  const controller = new AbortController()
   let params: TRequestParams | undefined
   let config: TRequestConfig
   try {
     params = parseJson(paramsEl.value, 'Params') as TRequestParams | undefined
-    config = buildConfig()
+    config = buildConfig(controller.signal)
+    syncInstance()
   } catch (e) {
     formError.hidden = false
     formError.textContent = e instanceof Error ? e.message : String(e)
@@ -175,15 +231,23 @@ form.addEventListener('submit', async (event) => {
 
   apiRequest.setToken(tokenEl.value.trim() || undefined)
 
+  inFlight = controller
   sendBtn.disabled = true
   sendBtn.textContent = 'Sending…'
+  cancelBtn.disabled = false
   try {
     const response = await apiRequest.request(method, url, params, config)
     renderResponse(response)
   } catch (e) {
     renderError(e)
   } finally {
+    inFlight = undefined
     sendBtn.disabled = false
     sendBtn.textContent = 'Send request'
+    cancelBtn.disabled = true
   }
+})
+
+cancelBtn.addEventListener('click', () => {
+  inFlight?.abort()
 })

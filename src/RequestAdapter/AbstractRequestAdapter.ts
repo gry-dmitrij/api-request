@@ -9,6 +9,11 @@ import ApiError from '@/ApiError';
 import { ErrorMessage } from '@/ErrorMessage';
 import ApiResponse from '@/ApiResponse';
 import {
+  CancellationScope,
+  createCancellation,
+  TCancellationConfig
+} from '@/Cancellation';
+import {
   IRequestAdapter
 } from './IRequestAdapter';
 
@@ -157,6 +162,11 @@ export default abstract class AbstractRequestAdapter implements IRequestAdapter 
         headers
       })
     })
+  }
+
+  // Single entry point for both adapters: turns timeout/signal into one abort source.
+  protected _createCancellation(config?: TCancellationConfig): CancellationScope {
+    return createCancellation(config)
   }
 
   getToken() {

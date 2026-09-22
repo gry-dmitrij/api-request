@@ -1,4 +1,5 @@
 import {
+  ApiRequestProps,
   TBodyRequestParams,
   TNoBodyRequestParams,
   TRequestConfig,
@@ -14,6 +15,24 @@ import ApiResponse from '@/ApiResponse';
 
 export default class ApiRequest {
   private _token: string | undefined
+  private readonly _timeout: number | undefined
+
+  constructor(props?: ApiRequestProps) {
+    this._timeout = props?.timeout
+  }
+
+  /**
+   * Applies the instance defaults. A timeout given on the call always wins —
+   * including an explicit 0, which lifts the instance limit (file uploads going
+   * through the same instance need that).
+   */
+  private _withDefaults(config?: TRequestConfig): TRequestConfig | undefined {
+    const timeout = this._timeout
+    if (timeout === undefined || config?.timeout !== undefined) {
+      return config
+    }
+    return { ...config, timeout }
+  }
 
   // No-body methods (get/head/delete) only accept query params.
   request<T = any>(
@@ -42,11 +61,12 @@ export default class ApiRequest {
     params?: TRequestParams,
     config?: TRequestConfig
   ): Promise<ApiResponse<T>> {
-    const adapter = RequestAdapterFactory.createRequestAdapter(config)
+    const requestConfig = this._withDefaults(config)
+    const adapter = RequestAdapterFactory.createRequestAdapter(requestConfig)
     if (this._token) {
       adapter.setToken(this._token)
     }
-    return adapter.request(method, url, params, config)
+    return adapter.request(method, url, params, requestConfig)
   }
 
   setToken(token: string | undefined) {

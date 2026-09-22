@@ -1,9 +1,11 @@
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest'
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import ApiRequest from '@/ApiRequest'
 import ApiResponse from '@/ApiResponse'
 import ApiError from '@/ApiError'
+import RequestAdapterFactory from '@/RequestAdapter/RequestAdapterFactory'
+import { TRequestConfig } from '@/IApiRequest'
 import { createUrl } from '@/test-utils/utils'
 
 const server = setupServer()
@@ -87,5 +89,56 @@ describe('ApiRequest', () => {
 
     await expect(new ApiRequest().request('get', createUrl('/boom')))
       .rejects.toBeInstanceOf(ApiError)
+  })
+
+  describe('default timeout', () => {
+    // The adapter is the only consumer of the merged config, so assert on what it
+    // receives rather than on real timing.
+    const captureTimeout = async (apiRequest: ApiRequest, config?: TRequestConfig) => {
+      const adapter = { setToken: vi.fn(), request: vi.fn().mockResolvedValue(undefined) }
+      const createRequestAdapter = vi
+        .spyOn(RequestAdapterFactory, 'createRequestAdapter')
+        .mockReturnValue(adapter)
+
+      await apiRequest.request('get', createUrl('/items'), undefined, config)
+      // Read the recorded calls before restoring: mockRestore() clears them.
+      const captured = {
+        toAdapter: adapter.request.mock.calls[0][3] as TRequestConfig | undefined,
+        toFactory: createRequestAdapter.mock.calls[0][0] as TRequestConfig | undefined
+      }
+      createRequestAdapter.mockRestore()
+
+      return captured
+    }
+
+    test('is absent unless the constructor sets one', async () => {
+      const { toAdapter } = await captureTimeout(new ApiRequest())
+      expect(toAdapter?.timeout).toBeUndefined()
+    })
+
+    test('applies to a call that does not specify one', async () => {
+      const { toAdapter, toFactory } = await captureTimeout(new ApiRequest({ timeout: 1000 }))
+      expect(toAdapter?.timeout).toBe(1000)
+      // The factory must see the same config; otherwise adapter selection could diverge.
+      expect(toFactory?.timeout).toBe(1000)
+    })
+
+    test('keeps the rest of the call config intact', async () => {
+      const { toAdapter } = await captureTimeout(
+        new ApiRequest({ timeout: 1000 }),
+        { responseType: 'text', headers: { 'X-Test': '1' } }
+      )
+      expect(toAdapter).toMatchObject({ timeout: 1000, responseType: 'text' })
+    })
+
+    test('is overridden by a per-call timeout', async () => {
+      const { toAdapter } = await captureTimeout(new ApiRequest({ timeout: 1000 }), { timeout: 50 })
+      expect(toAdapter?.timeout).toBe(50)
+    })
+
+    test('is lifted by an explicit timeout of 0', async () => {
+      const { toAdapter } = await captureTimeout(new ApiRequest({ timeout: 1000 }), { timeout: 0 })
+      expect(toAdapter?.timeout).toBe(0)
+    })
   })
 })

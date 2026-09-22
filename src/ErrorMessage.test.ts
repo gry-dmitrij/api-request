@@ -17,4 +17,17 @@ describe('ErrorMessage', () => {
       'ReadableStream body is not supported by the XMLHttpRequest adapter'
     )
   })
+
+  test('Timeout names the limit that was exceeded', () => {
+    expect(ErrorMessage.Timeout(1000)).toBe('Timeout of 1000ms exceeded')
+  })
+
+  test('Timeout falls back to a generic message without a limit', () => {
+    expect(ErrorMessage.Timeout()).toBe('Timeout exceeded')
+    expect(ErrorMessage.Timeout(0)).toBe('Timeout exceeded')
+  })
+
+  test('Aborted', () => {
+    expect(ErrorMessage.Aborted()).toBe('Request aborted')
+  })
 })

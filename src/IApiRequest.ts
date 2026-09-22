@@ -17,9 +17,20 @@ export interface ApiProgressEvent {
   progress?: number
 }
 
+export interface ApiRequestProps {
+  // Default request timeout in ms. A per-request timeout overrides it.
+  timeout?: number
+}
+
+// The shared part must hold every option except the mutually exclusive progress
+// callbacks: a field placed inside the union branches cannot be read off
+// TRequestConfig without a discriminant.
 export type TRequestConfig = {
   responseType?: ResponseType
   headers?: TRequestHeaders
+  // Milliseconds; 0 or undefined means no limit.
+  timeout?: number
+  signal?: AbortSignal
 } & ({
   onUploadProgress?: (e: ApiProgressEvent) => void
   onDownloadProgress?: never

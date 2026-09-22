@@ -34,4 +34,14 @@ describe('ApiError', () => {
     expect(error.response).toBe(response)
     expect(error.response?.data).toEqual({ error: 'boom' })
   })
+
+  test('has no code unless one is given', () => {
+    const error = new ApiError({ message: 'Not Found', status: 404, statusText: 'Not Found' })
+    expect(error.code).toBeUndefined()
+  })
+
+  test('carries the code when provided', () => {
+    const error = new ApiError({ message: 'Timeout exceeded', status: 0, statusText: '', code: 'timeout' })
+    expect(error.code).toBe('timeout')
+  })
 })

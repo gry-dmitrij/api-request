@@ -101,6 +101,24 @@ button {
 button:hover { filter: brightness(1.08); }
 button:disabled { opacity: 0.6; cursor: progress; }
 
+.actions { display: flex; gap: 12px; }
+.actions button { margin-top: 4px; }
+.actions .button--ghost { flex: 0 0 140px; }
+
+.button--ghost {
+  background: transparent;
+  color: var(--err);
+  border: 1px solid var(--border);
+}
+.button--ghost:disabled { cursor: not-allowed; }
+
+.hint {
+  margin: 0 0 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
 .form-error {
   margin: 12px 0 0;
   color: var(--err);
